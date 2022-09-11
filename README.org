@@ -1,0 +1,36 @@
+* Project idea
+As AI comes to deep learning, the training process becomes more critical.
+How to train a network with parallelism should be a new direction for AI research.
+
+
+* Network design
+ taining data -> inputLayer( with w1, and b1, sigmod as active function) -> dinputLayer
+ 
+ dinputLayer -> hiddenLayer( with w2, and b2, sigmod as active function) -> dhiddenLayer
+ 
+ dhiddenLayer -> OutputLayer( with w3, and b3, sigmod as active function) -> doutputLayer
+ 
+ Loss = L2(doutputLayer - onehot lable)
+ 
+ Backpropagation from Loss to w3, b3
+ 
+ Backpropagation from Loss to w2, b2
+ 
+ Backpropagation from Loss to w1, b1
+
+ 
+* Project design
+rank = 0, is the main network, will be initialized, but not for training, it will broadcast its weights to all other training networks, which have rank != 0 and train for different training data (training dat will equally divied to each training networks).
+
+After each training network has been done for one epoch training, the updated weights (after multipled by learning rate) will be transferred to main network through mpi. All updated weights will accumulated in mainnetwork, and broadcast again to each training networks, and then training network starts to  train for next epoch.
+
+* Project structue
+This network can be trained for iris (https://www.kaggle.com/datasets/saurabh00007/iriscsv) dataset also for intel Image Classification (https://www.kaggle.com/datasets/puneet6060/intel-image-classification?resource=download).
+Download this dataset, it should has name of archive, and put archive in ./datasets/
+You can review my code, and choose one of them to be trained in /goai/myai.go main function.
+
+for each task we have different configuration file, .irisenv and .imgenv, those configuration
+decide the architectures of network and learningrate.
+
+* Project result
+For iris dataset, sometime I can get 50% accuracy, but  it totally depends on the initialization, but for images task, I can only run in the HPC cluster, but with very low accuracy.
