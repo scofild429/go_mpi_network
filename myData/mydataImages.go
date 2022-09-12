@@ -5,6 +5,7 @@ import (
 	"image"
 	_ "image/jpeg"
 	"log"
+	"math"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -148,7 +149,7 @@ func LoadImageFile(filename string) []float64 {
 }
 
 func ReadImageMap(parallelism int, rank int, foldername string) []map[string]string {
-	var filenames []string
+	var filenamestmp []string
 	count := 0
 	var label []string
 	var datamaplabel []map[string]string
@@ -157,14 +158,22 @@ func ReadImageMap(parallelism int, rank int, foldername string) []map[string]str
 			fmt.Println(err)
 			return err
 		}
+
 		if count%parallelism == rank {
 			if strings.HasSuffix(path, "jpg") {
-				filenames = append(filenames, path)
+				filenamestmp = append(filenamestmp, path)
 			}
 		}
 		count++
 		return nil
 	})
+	/// all nodes must have the same number of instance for training, otherwise mpi will always waiting if
+	/// some node do not have data
+
+	AllowedLen := int(math.Floor(float64(len(filenamestmp))/float64(parallelism)) * float64(parallelism))
+	filenames := filenamestmp[:AllowedLen]
+	// fmt.Println(len(filenames))
+
 	if err != nil {
 		fmt.Println(err)
 	}

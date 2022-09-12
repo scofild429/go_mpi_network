@@ -1,9 +1,9 @@
 inputdataDims=67500
-inputLayerNeurons=40
+inputLayerNeurons=60
 hiddenLayerNeurons=10
 outputLayerNeurons=6
 labelOnehotDims=6
-numEpochs=20
-learningRate=0.01
+numEpochs=10
+learningRate=0.05
 batchSize=4
 parallelism=8

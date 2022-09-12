@@ -47,7 +47,7 @@ type NeuralNete interface {
 	NormalizationOutputLayer()
 	ApplySoftmaxAtEnd()
 	Output(outputlabels *mat.Dense) float64
-	Evaluation(outputlabels *mat.Dense) int64
+	Evaluation(outputlabels *mat.Dense, j int, rank int) int64
 	BOutput2OutputLayer(j int)
 	BOutputLayer2HiddenLayer(j int)
 	BHiddenLayer2InputLayer(inputdata *mat.Dense, j int)
@@ -59,7 +59,7 @@ type NeuralNete interface {
 	TrainWithEpochMPI(j int, trigger bool) float64
 	NetworkForward(data *mat.Dense, j int)
 	NetworkBackward(j int)
-	NetworkEvaluation(j int) int
+	NetworkEvaluation(j int, rank int) int
 	PrepSendAdj(i int, j int, rank int) []float64
 	UpdateWeightsMain(AdjTmp []float64, rank int)
 	UpdatedWeightInTrainNet(MPIDATA []float64, i int, j int, rank int)

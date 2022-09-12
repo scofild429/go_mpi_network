@@ -1,36 +1,168 @@
-* Project idea
-As AI comes to deep learning, the training process becomes more critical.
-How to train a network with parallelism should be a new direction for AI research.
+#+TITLE: Report of Practical Course on High-Performance Computing
+#+SUBTITLE: 
+#+SUBTITLE: Parallel Deep Learning pipelines using Go and MPI
+#+SUBTITLE: 
+#+AUTHOR: Persentor: Silin Zhao 
+#+AUTHOR: Supervisor: Patrick Michaelis
+#+OPTIONS: num:t
+#+STARTUP: overview
+#+DATA: September 13 2022
+* Project Notation
+** Datasets
+Project code can be found [[https://github.com/scofild429/go_mpi_network]],
+This is the README page.
 
+iris dataset (https://www.kaggle.com/datasets/saurabh00007/iriscsv)
+Intel Image Classification
+(https://www.kaggle.com/datasets/puneet6060/intel-image-classification?resource=download).
+Download this dataset,  put archive it in the folder ./datasets/
 
-* Network design
- taining data -> inputLayer( with w1, and b1, sigmod as active function) -> dinputLayer
- 
- dinputLayer -> hiddenLayer( with w2, and b2, sigmod as active function) -> dhiddenLayer
- 
- dhiddenLayer -> OutputLayer( with w3, and b3, sigmod as active function) -> doutputLayer
- 
- Loss = L2(doutputLayer - onehot lable)
- 
- Backpropagation from Loss to w3, b3
- 
- Backpropagation from Loss to w2, b2
- 
- Backpropagation from Loss to w1, b1
+training data will equally divied into each training networks
 
+** Configuration
++ ./goai/.irisenv
++ ./goai/.imgenv
+#+begin_src
+    inputdataDims=4
+    inputLayerNeurons=30
+    hiddenLayerNeurons=20
+    outputLayerNeurons=3
+    labelOnehotDims=3
+    numEpochs=100
+    learningRate=0.01
+    batchSize=4
+    parallelism=8
+#+end_src
+
+** Sumbit the job in cluster
+#+begin_src sh
+  #!/bin/bash
+  #SBATCH --job-name mpi-go-neural-network
+  #SBATCH -N 1
+  #SBATCH -p fat
+  #SBATCH -n 20
+  #SBATCH --time=01:30:00
+
+  module purge
+  module load openmpi
+
+  mpirun -n 20 ./goai
+#+end_src
+
+* Deep Learning's problem
++ Image Classification
++ NLP
++ Sementic segmentation
+
+As AI comes to deep learning, the computing resource becomes more critical for training process.
+
+*Solution*
++ GPU
++ TPU
++ Distributed learning 
+
+* Single network
+ taining data -> inputLayer(w1, b1, sigmod) -> dinputLayer
+ Normalization
  
-* Project design
-rank = 0, is the main network, will be initialized, but not for training, it will broadcast its weights to all other training networks, which have rank != 0 and train for different training data (training dat will equally divied to each training networks).
+ dinputLayer -> hiddenLayer(w2, b2, sigmod) -> dhiddenLayer
+ Normalization
+ 
+ dhiddenLayer -> OutputLayer(w3, b3, sigmod) -> doutputLayer
+ 
+ Loss = L2: (doutputLayer - onehot_lable)^2
+ 
+ Backpropagation from Loss  of Outputlayer  to w3, b3
+ Backpropagation from error of Hiddenlayer  to w2, b2
+ Backpropagation from error of Inputlayer   to w1, b1
 
-After each training network has been done for one epoch training, the updated weights (after multipled by learning rate) will be transferred to main network through mpi. All updated weights will accumulated in mainnetwork, and broadcast again to each training networks, and then training network starts to  train for next epoch.
+ - Stochastic Gradient Descent (SGD)
+ - Mini-batch Gradient Descent (MBGD)
+ - Batch Gradient Descent (BGD)
 
-* Project structue
-This network can be trained for iris (https://www.kaggle.com/datasets/saurabh00007/iriscsv) dataset also for intel Image Classification (https://www.kaggle.com/datasets/puneet6060/intel-image-classification?resource=download).
-Download this dataset, it should has name of archive, and put archive in ./datasets/
+* Illustration of weights updating
+[[./NeuralNet.png]]
+
+* Code implementation
+#+begin_src go
+    func main() {
+          singlenode.Single_node_iris(true)
+          // mpicode.Mpi_iris_Allreduce()
+          // mpicode.Mpi_iris_SendRecv()
+          // mpicode.Mpi_images_Allreduce()
+          // mpicode.Mpi_images_SendRecv()
+  }
+#+end_src
+
 You can review my code, and choose one of them to be trained in /goai/myai.go main function.
 
-for each task we have different configuration file, .irisenv and .imgenv, those configuration
-decide the architectures of network and learningrate.
+comparing with python:
+
++ ./pytorchDemo/irisfromscratch.py
++ ./pytorchDemo/iriswithpytorch.py
++ ./pytorchDemo/logisticRcuda.py
+
+* MPI communication
+
+[[github.com/sbromberger/gompi][https://github.com/sbromberger/gompi]]
+import CGO as C
+
+ + *Collective*
+   gompi.BcastFloat64s() -> C.MPI_Bcast()
+   gompi.AllreduceFloat64s -> C.MPI_Allreduce()
+   
+ + *Non Collective*
+   gompi.SendFloat64s() -> C.MPI_Send()
+   gompi.SendFloat64() -> C.MPI_Send()
+   gompi.RecvFloat64s() -> C.MPI_Recv()
+   gompi.RecvFloat64() -> C.MPI_Recv()
+
+* Non collectives architecture
+[[./MPINetArch.png]]
+
+* Non collectives design
+#+begin_src sh
+  mpirun -n -20 ./goai
+#+end_src
+** rank = 0
++ *main network*
++ weights will be initialized, but not for training,
++ weights will broadcast to all other training networks
+** rank != 0
++ *train netework*
++ receive weights from main network for initialization
++ After each batch training done, sending its weights variance to main network
+  
+** rank = 0
++ receiving the  variance from all training network
++ and accumulate them
++ send back to training network
+  
+** rank != 0
++ start next training batch
+
+* Collective architecture
+[[./MPINetArchAllreduce.png]]
+
+* Collective design
++ All network train its data respectively,
++ After each train batch, pack all weights into array
++ MPI_Allreduce for new array
++ updating weights with  new array
 
 * Project result
-For iris dataset, sometime I can get 50% accuracy, but  it totally depends on the initialization, but for images task, I can only run in the HPC cluster, but with very low accuracy.
+** single netework performance
+*** Loss
+*** Accuracy
+
+
+
+
+** Non collective performance
+** Collective performance
+
+* Problems 
+*model implement is not perfect**
+
+* Conculution
+

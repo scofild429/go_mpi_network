@@ -131,19 +131,16 @@ func Mpi_images_Allreduce() {
 		accuracytmp := networker.ValidationEpoch(i, rank)
 		Accuracy = append(Accuracy, accuracytmp)
 	}
-
 	if newComm.Rank() != 0 {
 		newComm.SendFloat64s(Loss, 0, 0)
 		newComm.SendFloat64s(Accuracy, 0, 1)
 	}
-
 	LossAll := make([][]float64, parallelism)
 	AccuracyAll := make([][]float64, parallelism)
 	for i := range LossAll {
 		LossAll[i] = make([]float64, numEpochsenv)
 		AccuracyAll[i] = make([]float64, numEpochsenv)
 	}
-
 	if newComm.Rank() == 0 {
 		LossAll[0] = Loss
 		AccuracyAll[0] = Accuracy
@@ -151,6 +148,7 @@ func Mpi_images_Allreduce() {
 			LossAll[mark], _ = newComm.RecvFloat64s(mark, 0)
 			AccuracyAll[mark], _ = newComm.RecvFloat64s(mark, 1)
 		}
+		// fmt.Println(AccuracyAll)
 		plotcode.DrowLoss(LossAll, numEpochsenv, parallelism)
 		plotcode.DrowAccuracy(AccuracyAll, numEpochsenv, parallelism)
 	}

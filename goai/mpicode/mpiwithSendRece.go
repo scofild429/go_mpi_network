@@ -1,7 +1,6 @@
 package mpicode
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -130,7 +129,7 @@ func Mpi_images_SendRecv() {
 		for i := 0; i < numEpochsenv; i++ {
 			loss := 0.0
 			for j := 0; j < net.Config.TrainbatchNum; j++ {
-				fmt.Println("Starting for", i, "-th epoches", j, "-th batch  in node ", rank, "for training")
+				// fmt.Println("Starting for", i, "-th epoches", j, "-th batch  in node ", rank, "for training")
 				loss += networker.TrainWithEpochMPI(j, false)
 				MPIDATA = networker.PrepSendAdj(i, j, rank)
 				newComm.SendFloat64s(MPIDATA, 0, rank)
@@ -151,7 +150,7 @@ func Mpi_images_SendRecv() {
 		}
 		for i := 0; i < numEpochsenv; i++ {
 			for j := 0; j < net.Config.TrainbatchNum; j++ {
-				fmt.Println("Starting for", i, "-th epoches", j, "-th batch  in Mainnnete weights  be merged")
+				// fmt.Println("Starting for", i, "-th epoches", j, "-th batch  in Main network weights  has to be merged")
 				networker.InitialWeightsMPIAllreduce(j)
 				for mark := 1; mark < parallelism; mark++ {
 					AdjTmp, _ := newComm.RecvFloat64s(mark, mark)
@@ -159,7 +158,6 @@ func Mpi_images_SendRecv() {
 				}
 				MPIDATA = networker.PrepUpdatedWeightToTrainNet()
 				for mark := 1; mark < parallelism; mark++ {
-					MPIDATA = networker.PrepUpdatedWeightToTrainNet()
 					newComm.SendFloat64s(MPIDATA, mark, mark)
 				}
 			}

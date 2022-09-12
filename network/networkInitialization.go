@@ -42,44 +42,44 @@ func (nn *NeuralNetFrame) Initialize() {
 
 }
 
-func (nn *NeuralNetFrame) InitDataForTest() {
-	trainDataLen := len(myData.TrainingData)
-	nn.Config.traindataLen = trainDataLen
-	nn.Config.TrainbatchNum = trainDataLen / nn.Config.batchSize
-	for i := 0; i < nn.Config.TrainbatchNum; i++ {
-		s0 := mat.NewDense(1, 4, []float64{1, 0, 0, 0})
-		s1 := mat.NewDense(1, 4, []float64{0, 1, 0, 0})
-		s2 := mat.NewDense(1, 4, []float64{0, 1, 0, 1})
-		s3 := mat.NewDense(1, 4, []float64{1, 1, 0, 1})
-		nn.inputdata = append(nn.inputdata, s0)
-		nn.inputdata = append(nn.inputdata, s1)
-		nn.inputdata = append(nn.inputdata, s2)
-		nn.inputdata = append(nn.inputdata, s3)
+// func (nn *NeuralNetFrame) InitDataForTest() {
+// 	trainDataLen := len(myData.TrainingData)
+// 	nn.Config.traindataLen = trainDataLen
+// 	nn.Config.TrainbatchNum = trainDataLen / nn.Config.batchSize
+// 	for i := 0; i < nn.Config.TrainbatchNum; i++ {
+// 		s0 := mat.NewDense(1, 4, []float64{1, 0, 0, 0})
+// 		s1 := mat.NewDense(1, 4, []float64{0, 1, 0, 0})
+// 		s2 := mat.NewDense(1, 4, []float64{0, 1, 0, 1})
+// 		s3 := mat.NewDense(1, 4, []float64{1, 1, 0, 1})
+// 		nn.inputdata = append(nn.inputdata, s0)
+// 		nn.inputdata = append(nn.inputdata, s1)
+// 		nn.inputdata = append(nn.inputdata, s2)
+// 		nn.inputdata = append(nn.inputdata, s3)
 
-		t0 := mat.NewDense(1, 3, []float64{1, 0, 0})
-		t1 := mat.NewDense(1, 3, []float64{1, 0, 0})
-		t2 := mat.NewDense(1, 3, []float64{0, 0, 1})
-		t3 := mat.NewDense(1, 3, []float64{1, 0, 1})
-		nn.trainlabels = append(nn.trainlabels, t0)
-		nn.trainlabels = append(nn.trainlabels, t1)
-		nn.trainlabels = append(nn.trainlabels, t2)
-		nn.trainlabels = append(nn.trainlabels, t3)
-	}
-	testDataLen := len(myData.TestingData)
-	nn.Config.testdataLen = testDataLen
-	nn.Config.TestbatchNum = testDataLen / nn.Config.batchSize
-	for i := 0; i < testDataLen; i++ {
-		nn.testdata = append(nn.testdata, &myData.TestingData[i])
-		nn.trainlabels = append(nn.trainlabels, &myData.TestingTarget[i])
-	}
-	validDataLen := len(myData.ValidingData)
-	nn.Config.validdataLen = validDataLen
-	nn.Config.ValidbatchNum = validDataLen / nn.Config.batchSize
-	for i := 0; i < validDataLen; i++ {
-		nn.validdata = append(nn.validdata, &myData.ValidingData[i])
-		nn.validlabels = append(nn.validlabels, &myData.ValidingTarget[i])
-	}
-}
+// 		t0 := mat.NewDense(1, 3, []float64{1, 0, 0})
+// 		t1 := mat.NewDense(1, 3, []float64{1, 0, 0})
+// 		t2 := mat.NewDense(1, 3, []float64{0, 0, 1})
+// 		t3 := mat.NewDense(1, 3, []float64{1, 0, 1})
+// 		nn.trainlabels = append(nn.trainlabels, t0)
+// 		nn.trainlabels = append(nn.trainlabels, t1)
+// 		nn.trainlabels = append(nn.trainlabels, t2)
+// 		nn.trainlabels = append(nn.trainlabels, t3)
+// 	}
+// 	testDataLen := len(myData.TestingData)
+// 	nn.Config.testdataLen = testDataLen
+// 	nn.Config.TestbatchNum = testDataLen / nn.Config.batchSize
+// 	for i := 0; i < testDataLen; i++ {
+// 		nn.testdata = append(nn.testdata, &myData.TestingData[i])
+// 		nn.trainlabels = append(nn.trainlabels, &myData.TestingTarget[i])
+// 	}
+// 	validDataLen := len(myData.ValidingData)
+// 	nn.Config.validdataLen = validDataLen
+// 	nn.Config.ValidbatchNum = validDataLen / nn.Config.batchSize
+// 	for i := 0; i < validDataLen; i++ {
+// 		nn.validdata = append(nn.validdata, &myData.ValidingData[i])
+// 		nn.validlabels = append(nn.validlabels, &myData.ValidingTarget[i])
+// 	}
+// }
 
 func (nn *NeuralNetFrame) InitData() {
 	trainDataLen := len(myData.TrainingData)

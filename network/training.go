@@ -35,12 +35,15 @@ func (nn *NeuralNetFrame) TrainWithEpochMPI(j int, nompi bool) float64 {
 
 func (nn *NeuralNetFrame) NetworkForward(data *mat.Dense, j int) {
 	nn.FInputData2InputLayer(data, j)
+	nn.StandardizationInputLayer()
 	nn.SigmoidActiveFuncInputLayer()
+
 	nn.FInputLayer2HiddenLayer(j)
-
+	nn.StandardizationHiddenLayer()
 	nn.SigmoidActiveFuncHiddenLayer()
-	nn.FHiddenLayer2OutputLayer(j)
 
+	nn.FHiddenLayer2OutputLayer(j)
+	// nn.StandardizationOutputLayer()
 	nn.SigmoidActiveFuncOutputLayer()
 }
 
@@ -59,14 +62,14 @@ func (nn *NeuralNetFrame) NetworkBackward(j int) {
 func (nn *NeuralNetFrame) ValidationEpoch(epoch int, rank int) float64 {
 	correctNum := 0
 	for j := 0; j < nn.Config.validdataLen; j++ {
-		correctNum += nn.NetworkEvaluation(j)
+		correctNum += nn.NetworkEvaluation(j, rank)
 	}
 	AccuracyTemp := float64(correctNum) / float64(nn.Config.validdataLen)
 	return float64(AccuracyTemp)
 }
 
-func (nn *NeuralNetFrame) NetworkEvaluation(j int) int {
+func (nn *NeuralNetFrame) NetworkEvaluation(j int, rank int) int {
 	nn.NetworkForward(nn.validdata[j], j)
-	count := nn.Evaluation(nn.validlabels[j])
+	count := nn.Evaluation(nn.validlabels[j], j, rank)
 	return int(count)
 }

@@ -7,7 +7,6 @@ import (
 )
 
 func (nn *NeuralNetFrame) FInputData2InputLayer(inputdata *mat.Dense, j int) {
-	// 	fmt.Println(mat.Formatted(nn.wInput2InputLayer))
 	nn.dInputLayerTmp.Mul(inputdata, nn.wInput2InputLayer)
 	Input2InputLayerAddB := func(_, col int, v float64) float64 { return v + nn.bInput2InputLayer.At(0, col) }
 	nn.dInputLayerTmp.Apply(Input2InputLayerAddB, nn.dInputLayerTmp)
@@ -28,9 +27,7 @@ func (nn *NeuralNetFrame) Output(outputlables *mat.Dense) float64 {
 	d := mat.Sum(nn.dOutputLayerLoss)
 	return d
 }
-func (nn *NeuralNetFrame) Evaluation(outputlabels *mat.Dense) int64 {
-	// fmt.Println(outputlabels)
-	// fmt.Println(nn.dOutputLayer)
+func (nn *NeuralNetFrame) Evaluation(outputlabels *mat.Dense, j int, rank int) int64 {
 	maxdatavalue := nn.dOutputLayer.At(0, 0)
 	maxdataindex := 0
 	for j := 0; j < nn.Config.labelOnehotDims; j++ {
