@@ -36,7 +36,6 @@ func Single_node_iris(nompi bool) {
 		accuracytmp := networker.ValidationEpoch(i, rank)
 		Accuracy = append(Accuracy, accuracytmp)
 	}
-
 	LossAll := make([][]float64, parallelism)
 	AccuracyAll := make([][]float64, parallelism)
 	LossAll[0] = Loss

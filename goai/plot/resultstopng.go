@@ -22,6 +22,7 @@ func DrowLoss(Loss [][]float64, numEpochsenv int, parallelism int) {
 		}
 		Charts = append(Charts, charttmp)
 	}
+
 	graph := chart.Chart{
 		Background: chart.Style{
 			Padding: chart.Box{
@@ -62,6 +63,7 @@ func DrowAccuracy(Accuracy [][]float64, numEpochsenv int, parallelism int) {
 		}
 		Charts = append(Charts, charttmp)
 	}
+
 	graph := chart.Chart{
 		Background: chart.Style{
 			Padding: chart.Box{

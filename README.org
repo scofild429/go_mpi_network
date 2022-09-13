@@ -35,6 +35,11 @@ training data will equally divied into each training networks
 #+end_src
 
 ** Sumbit the job in cluster
+
+*no singularity*, installing golang 1.18 was failed always
+
+binary executable code of golang, *go build*
+
 #+begin_src sh
   #!/bin/bash
   #SBATCH --job-name mpi-go-neural-network
@@ -81,7 +86,7 @@ As AI comes to deep learning, the computing resource becomes more critical for t
  - Batch Gradient Descent (BGD)
 
 * Illustration of weights updating
-[[./NeuralNet.png]]
+[[./png/NeuralNetwork.png]]
 
 * Code implementation
 #+begin_src go
@@ -102,6 +107,12 @@ comparing with python:
 + ./pytorchDemo/iriswithpytorch.py
 + ./pytorchDemo/logisticRcuda.py
 
+* Netework performance(iris dataset)
+** Loss
+[[./png/single_node_loss.png]]
+** Accuracy
+[[./png/single_node_acc.png]]
+
 * MPI communication
 
 [[github.com/sbromberger/gompi][https://github.com/sbromberger/gompi]]
@@ -118,7 +129,7 @@ import CGO as C
    gompi.RecvFloat64() -> C.MPI_Recv()
 
 * Non collectives architecture
-[[./MPINetArch.png]]
+[[./png/MPINetworkSendRecv.png]]
 
 * Non collectives design
 #+begin_src sh
@@ -142,7 +153,7 @@ import CGO as C
 + start next training batch
 
 * Collective architecture
-[[./MPINetArchAllreduce.png]]
+[[./png/MPINetworkAllreduce.png]]
 
 * Collective design
 + All network train its data respectively,
@@ -150,19 +161,41 @@ import CGO as C
 + MPI_Allreduce for new array
 + updating weights with  new array
 
-* Project result
-** single netework performance
-*** Loss
-*** Accuracy
+* Iris dataset performance 
+** Send&Recv loss
+[[./png/iris_sendrecv_loss.png]]
 
+** Send&Recv accuracy
+[[./png/iris_sendrecv_accuracy.png]]
 
+** Allreduce loss
+[[./png/iris_allreduce_loss.png]]
 
+** Allreduce accuracy
+[[./png/iris_allreduce_accuracy.png]]
+* intel image classification performance
+** Send&Recv loss (220 images)
 
-** Non collective performance
-** Collective performance
+[[./png/intelImage_subset_sendrecving_loss.png]]
+** Allreduce loss (220 images)
 
-* Problems 
-*model implement is not perfect**
+[[./png/intelImage_subset_allreduce_loss.png]]
+
+** SendRecv loss (14000 images)
+** Allreduce loss (14000 images)
+[[./png/intelImage_allreduce_loss.png]]
+
+* Discussion
+
+*neural network model implement is not perfect, so the accuracy performance not so well*
+
+*the comparing between Allreduce and Send&Recv can be done*
 
 * Conculution
++ Golang can also be used for parallel computing
++ neural network implementation of golang can be improved
++ HPC cluster for distributed learning has significant benefits for large dataset
++ 
+
+
 
