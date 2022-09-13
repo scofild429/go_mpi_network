@@ -7,19 +7,20 @@
 #+OPTIONS: num:t
 #+STARTUP: overview
 #+DATA: September 13 2022
-* Project Notation
+* Project notation
 ** Datasets
-Project code can be found [[https://github.com/scofild429/go_mpi_network]],
-This is the README page.
+This project source code can be found [[https://github.com/scofild429/go_mpi_network]],
+This is the *README* page.
 
-iris dataset (https://www.kaggle.com/datasets/saurabh00007/iriscsv)
-Intel Image Classification
+Iris dataset (https://www.kaggle.com/datasets/saurabh00007/iriscsv)
+
+Intel image classification
 (https://www.kaggle.com/datasets/puneet6060/intel-image-classification?resource=download).
-Download this dataset,  put archive it in the folder ./datasets/
+Download it,  put archive it in the folder ./datasets/
 
-training data will equally divied into each training networks
+*All training data will equally divied for each training network, specially for mpi*
 
-** Configuration
+** Configuration 
 + ./goai/.irisenv
 + ./goai/.imgenv
 #+begin_src
@@ -31,14 +32,13 @@ training data will equally divied into each training networks
     numEpochs=100
     learningRate=0.01
     batchSize=4
-    parallelism=8
 #+end_src
 
 ** Sumbit the job in cluster
 
 *no singularity*, installing golang 1.18 was failed always
 
-binary executable code of golang, *go build*
+using binary executable code of golang, *go build*
 
 #+begin_src sh
   #!/bin/bash
@@ -54,26 +54,28 @@ binary executable code of golang, *go build*
   mpirun -n 20 ./goai
 #+end_src
 
-* Deep Learning's problem
+* Deep learning's problem
+
+As AI comes to deep learning, the computing resource becomes more critical for training process.
+
+*Applications:*
 + Image Classification
 + NLP
 + Sementic segmentation
 
-As AI comes to deep learning, the computing resource becomes more critical for training process.
-
 *Solution*
 + GPU
 + TPU
-+ Distributed learning 
++ *Distributed learning*
 
-* Single network
- taining data -> inputLayer(w1, b1, sigmod) -> dinputLayer
+* Single network architecture
+ taining data -> inputLayer(w1, b1, sigmoid) -> dinputLayer
  Normalization
  
- dinputLayer -> hiddenLayer(w2, b2, sigmod) -> dhiddenLayer
+ dinputLayer -> hiddenLayer(w2, b2, sigmoid) -> dhiddenLayer
  Normalization
  
- dhiddenLayer -> OutputLayer(w3, b3, sigmod) -> doutputLayer
+ dhiddenLayer -> OutputLayer(w3, b3, sigmoid) -> doutputLayer
  
  Loss = L2: (doutputLayer - onehot_lable)^2
  
@@ -81,6 +83,8 @@ As AI comes to deep learning, the computing resource becomes more critical for t
  Backpropagation from error of Hiddenlayer  to w2, b2
  Backpropagation from error of Inputlayer   to w1, b1
 
+ Derivative of sigmoid, Normalization, Standardization
+ 
  - Stochastic Gradient Descent (SGD)
  - Mini-batch Gradient Descent (MBGD)
  - Batch Gradient Descent (BGD)
@@ -128,10 +132,10 @@ import CGO as C
    gompi.RecvFloat64s() -> C.MPI_Recv()
    gompi.RecvFloat64() -> C.MPI_Recv()
 
-* Non collectives architecture
+* Non collective architecture
 [[./png/MPINetworkSendRecv.png]]
 
-* Non collectives design
+* Non collective design
 #+begin_src sh
   mpirun -n -20 ./goai
 #+end_src
@@ -173,7 +177,7 @@ import CGO as C
 
 ** Allreduce accuracy
 [[./png/iris_allreduce_accuracy.png]]
-* intel image classification performance
+* Intel image classification performance
 ** Send&Recv loss (220 images)
 
 [[./png/intelImage_subset_sendrecving_loss.png]]
@@ -182,20 +186,27 @@ import CGO as C
 [[./png/intelImage_subset_allreduce_loss.png]]
 
 ** SendRecv loss (14000 images)
+
+[[./png/intelImage_sendrecv_loss.png]]
 ** Allreduce loss (14000 images)
+
 [[./png/intelImage_allreduce_loss.png]]
 
 * Discussion
 
 *neural network model implement is not perfect, so the accuracy performance not so well*
 
-*the comparing between Allreduce and Send&Recv can be done*
+*For each epoch:*
++ Allreduce: about 2 minutes
++ Send&Recv: about 3.6 minutes
+
+
+*Scaling behavior, such as speedup diagrams is missing*
 
 * Conculution
 + Golang can also be used for parallel computing
 + neural network implementation of golang can be improved
 + HPC cluster for distributed learning has significant benefits for large dataset
-+ 
 
 
 

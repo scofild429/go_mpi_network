@@ -6,4 +6,3 @@ labelOnehotDims=6
 numEpochs=40
 learningRate=0.004
 batchSize=4
-parallelism=8
