@@ -1,9 +1,11 @@
 package mpicode
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 	mpi "github.com/sbromberger/gompi"
@@ -13,6 +15,15 @@ import (
 )
 
 func Mpi_iris_SendRecv() {
+	start := time.Now()
+
+	// start mpi
+	mpi.Start(true)
+	var ranks []int
+	newComm := mpi.NewCommunicator(ranks)
+	parallelism := mpi.WorldSize()
+	rank := mpi.WorldRank()
+
 	//read .env configuation
 	err := godotenv.Load(".irisenv")
 	if err != nil {
@@ -25,12 +36,6 @@ func Mpi_iris_SendRecv() {
 	numEpochsenv, _ := strconv.Atoi(os.Getenv("numEpochs"))
 	MPIDATALEN := inputdataDimsenv*inputLayerNeuronsenv + inputLayerNeuronsenv + inputLayerNeuronsenv*hiddenLayerNeuronsenv + hiddenLayerNeuronsenv + hiddenLayerNeuronsenv*outputLayerNeuronsenv + outputLayerNeuronsenv
 	MPIDATA := make([]float64, MPIDATALEN)
-
-	mpi.Start(true)
-	var ranks []int
-	newComm := mpi.NewCommunicator(ranks)
-	parallelism := mpi.WorldSize()
-	rank := mpi.WorldRank()
 
 	myData.LoadDataIris(0.8, 0.1, 0.1, parallelism-1, rank)
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -91,6 +96,15 @@ func Mpi_iris_SendRecv() {
 		}
 		plotcode.DrowLoss(Loss, numEpochsenv, parallelism-1)
 		plotcode.DrowAccuracy(Accuracy, numEpochsenv, parallelism-1)
+	}
+	// cal time consuming
+	end := time.Now()
+	timeconsumeeeachnode := make([]float64, 0)
+	timeconsumeeeachnode = append(timeconsumeeeachnode, end.Sub(start).Seconds())
+	timeconsumeaverage := make([]float64, 1)
+	newComm.AllreduceFloat64s(timeconsumeaverage, timeconsumeeeachnode, mpi.OpSum, 0)
+	if newComm.Rank() == 0 {
+		fmt.Println(timeconsumeaverage[0] / float64(parallelism))
 	}
 	mpi.Stop()
 }

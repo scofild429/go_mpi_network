@@ -1,4 +1,4 @@
-#+TITLE: Report of Practical Course on High-Performance Computing
+#+TITLE: Report oft Practical Course on High-Performance Computing
 #+SUBTITLE: 
 #+SUBTITLE: Parallel Deep Learning pipelines using Go and MPI
 #+SUBTITLE: 
@@ -61,7 +61,7 @@ As AI comes to deep learning, the computing resource becomes more critical for t
 *Applications:*
 + Image Classification
 + NLP
-+ Sementic segmentation
++ Semantic segmentation
 
 *Solution*
 + GPU
@@ -69,7 +69,7 @@ As AI comes to deep learning, the computing resource becomes more critical for t
 + *Distributed learning*
 
 * Single network architecture
- taining data -> inputLayer(w1, b1, sigmoid) -> dinputLayer
+ raining data -> inputLayer(w1, b1, sigmoid) -> dinputLayer
  Normalization
  
  dinputLayer -> hiddenLayer(w2, b2, sigmoid) -> dhiddenLayer
@@ -111,7 +111,7 @@ comparing with python:
 + ./pytorchDemo/iriswithpytorch.py
 + ./pytorchDemo/logisticRcuda.py
 
-* Netework performance(iris dataset)
+* Network performance(iris dataset)
 ** Loss
 [[./png/single_node_loss.png]]
 ** Accuracy
@@ -144,7 +144,7 @@ import CGO as C
 + weights will be initialized, but not for training,
 + weights will broadcast to all other training networks
 ** rank != 0
-+ *train netework*
++ *train network*
 + receive weights from main network for initialization
 + After each batch training done, sending its weights variance to main network
   
@@ -192,18 +192,28 @@ import CGO as C
 
 [[./png/intelImage_allreduce_loss.png]]
 
+* Speedup Diagrams
+** Speedup diagrams of iris for Allreduce and Send&Recv with different nodes
+[[./png/irisSpendup.png]]
+
+
+** Speedup diagrams of Intel Image Classification for Allreduce and Send&Recv with different nodes
+[[./png/intelImageSpendup.png]]
+
 * Discussion
 
 *neural network model implement is not perfect, so the accuracy performance not so well*
 
 *For each epoch:*
 + Allreduce: about 2 minutes
-+ Send&Recv: about 3.6 minutes
++ Send&Recv: about 3.6 minutes, because of synchronization of each batch training
 
 
-*Scaling behavior, such as speedup diagrams is missing*
+*Change nodes, scaling behavior, such as speedup diagrams is missing*
 
-* Conculution
+*Change the batchsize, reducing mpi communication*
+
+* Conclusion
 + Golang can also be used for parallel computing
 + neural network implementation of golang can be improved
 + HPC cluster for distributed learning has significant benefits for large dataset

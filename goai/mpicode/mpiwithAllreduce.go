@@ -1,9 +1,11 @@
 package mpicode
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 	mpi "github.com/sbromberger/gompi"
@@ -13,6 +15,14 @@ import (
 )
 
 func Mpi_iris_Allreduce() {
+	start := time.Now()
+	// start mpi
+	mpi.Start(true)
+	var ranks []int
+	newComm := mpi.NewCommunicator(ranks)
+	rank := mpi.WorldRank()
+	parallelism := mpi.WorldSize()
+
 	//read .env configuation
 	err := godotenv.Load(".irisenv")
 	if err != nil {
@@ -24,15 +34,8 @@ func Mpi_iris_Allreduce() {
 	outputLayerNeuronsenv, _ := strconv.Atoi(os.Getenv("outputLayerNeurons"))
 	numEpochsenv, _ := strconv.Atoi(os.Getenv("numEpochs"))
 	MPIDATALEN := inputdataDimsenv*inputLayerNeuronsenv + inputLayerNeuronsenv + inputLayerNeuronsenv*hiddenLayerNeuronsenv + hiddenLayerNeuronsenv + hiddenLayerNeuronsenv*outputLayerNeuronsenv + outputLayerNeuronsenv
-
-	mpi.Start(true)
-	var ranks []int
-	newComm := mpi.NewCommunicator(ranks)
-
 	MPIDATA := make([]float64, MPIDATALEN)
 	MPIDATAdest := make([]float64, MPIDATALEN)
-	parallelism := mpi.WorldSize()
-	rank := mpi.WorldRank()
 
 	myData.LoadDataIris(0.8, 0.1, 0.1, parallelism, rank)
 
@@ -81,10 +84,28 @@ func Mpi_iris_Allreduce() {
 		plotcode.DrowLoss(LossAll, numEpochsenv, parallelism)
 		plotcode.DrowAccuracy(AccuracyAll, numEpochsenv, parallelism)
 	}
+	// cal time consuming
+	end := time.Now()
+	timeconsumeeeachnode := make([]float64, 0)
+	timeconsumeeeachnode = append(timeconsumeeeachnode, end.Sub(start).Seconds())
+	timeconsumeaverage := make([]float64, 1)
+	newComm.AllreduceFloat64s(timeconsumeaverage, timeconsumeeeachnode, mpi.OpSum, 0)
+	if newComm.Rank() == 0 {
+		fmt.Println(timeconsumeaverage[0] / float64(parallelism))
+	}
 	mpi.Stop()
 }
 
 func Mpi_images_Allreduce() {
+	start := time.Now()
+
+	// start mpi
+	mpi.Start(true)
+	var ranks []int
+	newComm := mpi.NewCommunicator(ranks)
+	parallelism := mpi.WorldSize()
+	rank := mpi.WorldRank()
+
 	//read .env configuation
 	err := godotenv.Load(".imgenv")
 	if err != nil {
@@ -97,14 +118,8 @@ func Mpi_images_Allreduce() {
 	numEpochsenv, _ := strconv.Atoi(os.Getenv("numEpochs"))
 	MPIDATALEN := inputdataDimsenv*inputLayerNeuronsenv + inputLayerNeuronsenv + inputLayerNeuronsenv*hiddenLayerNeuronsenv + hiddenLayerNeuronsenv + hiddenLayerNeuronsenv*outputLayerNeuronsenv + outputLayerNeuronsenv
 
-	mpi.Start(true)
-	var ranks []int
-	newComm := mpi.NewCommunicator(ranks)
-
 	MPIDATA := make([]float64, MPIDATALEN)
 	MPIDATAdest := make([]float64, MPIDATALEN)
-	parallelism := mpi.WorldSize()
-	rank := mpi.WorldRank()
 
 	myData.ReadImage(parallelism, rank, 0.9)
 
@@ -151,6 +166,15 @@ func Mpi_images_Allreduce() {
 		// fmt.Println(AccuracyAll)
 		plotcode.DrowLoss(LossAll, numEpochsenv, parallelism)
 		plotcode.DrowAccuracy(AccuracyAll, numEpochsenv, parallelism)
+	}
+	// cal time consuming
+	end := time.Now()
+	timeconsumeeeachnode := make([]float64, 0)
+	timeconsumeeeachnode = append(timeconsumeeeachnode, end.Sub(start).Seconds())
+	timeconsumeaverage := make([]float64, 1)
+	newComm.AllreduceFloat64s(timeconsumeaverage, timeconsumeeeachnode, mpi.OpSum, 0)
+	if newComm.Rank() == 0 {
+		fmt.Println(timeconsumeaverage[0] / float64(parallelism))
 	}
 	mpi.Stop()
 }

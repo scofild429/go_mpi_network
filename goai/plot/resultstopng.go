@@ -88,3 +88,93 @@ func DrowAccuracy(Accuracy [][]float64, numEpochsenv int, parallelism int) {
 	defer f.Close()
 	graph.Render(chart.PNG, f)
 }
+
+func PlotIrisSpeedup() {
+	Charts := []chart.Series{}
+
+	irisAllreducetime := []float64{1.4, 0.91, 0.9, 0.84, 0.86, 0.79, 0.92, 1.32}
+	charttmpirisAllreduce := chart.ContinuousSeries{
+		Name:    "Allreduce",
+		XValues: []float64{1, 2, 3, 4, 5, 6, 7, 8},
+		YValues: irisAllreducetime,
+	}
+	Charts = append(Charts, charttmpirisAllreduce)
+
+	irisSendRecvtime := []float64{1.59, 1.27, 1.12, 1.05, 1.08, 1.28, 2.06}
+	charttmpirisSendRecv := chart.ContinuousSeries{
+		Name:    "SendRecv",
+		XValues: []float64{2, 3, 4, 5, 6, 7, 8},
+		YValues: irisSendRecvtime,
+	}
+	Charts = append(Charts, charttmpirisSendRecv)
+
+	graph := chart.Chart{
+		Background: chart.Style{
+			Padding: chart.Box{
+				Top:  10,
+				Left: 140,
+			},
+		},
+		XAxis: chart.XAxis{
+			Name: "Number of nodes",
+		},
+		YAxis: chart.YAxis{
+			Name: "Training Time comsuming in minutes",
+		},
+		Series: Charts,
+	}
+
+	graph.Elements = []chart.Renderable{
+		chart.LegendLeft(&graph),
+	}
+	graph.Height = 600
+	f, _ := os.Create("irisSpendup.png")
+	defer f.Close()
+	graph.Render(chart.PNG, f)
+}
+
+func PlotIntelImgageSpeedup() {
+
+	Charts := []chart.Series{}
+
+	intelImAllreducetime := []float64{203, 149, 108, 120, 111, 113, 138, 140}
+	charttmpAllreduce := chart.ContinuousSeries{
+		Name:    "Allreduce",
+		XValues: []float64{7, 8, 10, 12, 16, 20, 25, 30},
+		YValues: intelImAllreducetime,
+	}
+	Charts = append(Charts, charttmpAllreduce)
+
+	intelImSendRecvtime := []float64{90, 74, 74, 69, 53, 53, 57, 48}
+	charttmpSendRecv := chart.ContinuousSeries{
+		Name:    "SendRecv",
+		XValues: []float64{7, 8, 10, 12, 16, 20, 25, 30},
+		YValues: intelImSendRecvtime,
+	}
+	Charts = append(Charts, charttmpSendRecv)
+
+	graph := chart.Chart{
+		Background: chart.Style{
+			Padding: chart.Box{
+				Top:  10,
+				Left: 140,
+			},
+		},
+		XAxis: chart.XAxis{
+			Name: "Number of nodes",
+		},
+		YAxis: chart.YAxis{
+
+			Name: "Training Time comsuming in minutes",
+		},
+		Series: Charts,
+	}
+
+	graph.Elements = []chart.Renderable{
+		chart.LegendLeft(&graph),
+	}
+	graph.Height = 600
+	f, _ := os.Create("intelImageSpendup.png")
+	defer f.Close()
+	graph.Render(chart.PNG, f)
+}
