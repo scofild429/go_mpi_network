@@ -8,6 +8,8 @@
 #+STARTUP: overview
 #+DATA: September 13 2022
 * Project notation
+** Youtubu link
+[[https://www.youtube.com/watch?v=2siZQBvRPuY&t=6s]]
 ** Datasets
 This project source code can be found [[https://github.com/scofild429/go_mpi_network]],
 This is the *README* page.
