@@ -123,14 +123,14 @@ comparing with python:
 import CGO as C
 
  + *Collective*
-   gompi.BcastFloat64s() -> C.MPI_Bcast()
-   gompi.AllreduceFloat64s -> C.MPI_Allreduce()
+   - gompi.BcastFloat64s() -> C.MPI_Bcast()
+   - gompi.AllreduceFloat64s -> C.MPI_Allreduce()
    
  + *Non Collective*
-   gompi.SendFloat64s() -> C.MPI_Send()
-   gompi.SendFloat64() -> C.MPI_Send()
-   gompi.RecvFloat64s() -> C.MPI_Recv()
-   gompi.RecvFloat64() -> C.MPI_Recv()
+   - gompi.SendFloat64s() -> C.MPI_Send()
+   - gompi.SendFloat64() -> C.MPI_Send()
+   - gompi.RecvFloat64s() -> C.MPI_Recv()
+   - gompi.RecvFloat64() -> C.MPI_Recv()
 
 * Non collective architecture
 [[./png/MPINetworkSendRecv.png]]
