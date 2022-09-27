@@ -137,7 +137,7 @@ func PlotIntelImgageSpeedup() {
 
 	Charts := []chart.Series{}
 
-	intelImAllreducetime := []float64{203, 149, 108, 120, 111, 113, 138, 140}
+	intelImAllreducetime := []float64{90, 74, 74, 69, 59, 60, 47, 44}
 	charttmpAllreduce := chart.ContinuousSeries{
 		Name:    "Allreduce",
 		XValues: []float64{7, 8, 10, 12, 16, 20, 25, 30},
@@ -145,7 +145,7 @@ func PlotIntelImgageSpeedup() {
 	}
 	Charts = append(Charts, charttmpAllreduce)
 
-	intelImSendRecvtime := []float64{90, 74, 74, 69, 53, 53, 57, 48}
+	intelImSendRecvtime := []float64{203, 149, 118, 120, 111, 113, 138, 140}
 	charttmpSendRecv := chart.ContinuousSeries{
 		Name:    "SendRecv",
 		XValues: []float64{7, 8, 10, 12, 16, 20, 25, 30},
