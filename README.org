@@ -11,7 +11,16 @@
 * Project notation
 ** Youtube link
 [[https://www.youtube.com/watch?v=2siZQBvRPuY&t=6s]]
-** Datasets
+executing project in local computer
+#+begin_src
+  git clone it
+  cd go_mpi_network/goai
+  uncomment one case in myai.go
+  go build
+  ./goai
+#+end_src
+
+* Datasets
 
 - This project source code can be found [[https://github.com/scofild429/go_mpi_network]],This is the *README* page.
 - Iris dataset (https://www.kaggle.com/datasets/saurabh00007/iriscsv)
@@ -37,7 +46,7 @@
 
 *no singularity*, installing golang 1.18 was failed always
 
-using binary executable code of golang, *go build*
+using binary executable code of golang, *go build* and then transfering goai to cluster.
 
 #+begin_src sh
   #!/bin/bash

@@ -1,4 +1,4 @@
-% Created 2022-09-27 Di 12:32
+% Created 2022-09-27 Di 13:29
 % Intended LaTeX compiler: xelatex
 \documentclass[presentation]{beamer}
 \usepackage{graphicx}
@@ -25,11 +25,21 @@
 \begin{document}
 
 \maketitle
-\begin{frame}[label={sec:org59bb5fb}]{Project notation}
-\begin{block}{Youtube link}
+\begin{frame}[label={sec:org440efb7},fragile]{Project notation}
+ \begin{block}{Youtube link}
 \url{https://www.youtube.com/watch?v=2siZQBvRPuY\&t=6s}
+executing project in local computer
+\begin{verbatim}
+git clone it
+cd go_mpi_network/goai
+uncomment one case in myai.go
+go build
+./goai
+\end{verbatim}
 \end{block}
-\begin{block}{Datasets}
+\end{frame}
+
+\begin{frame}[label={sec:org61c86ac}]{Datasets}
 \begin{itemize}
 \item This project source code can be found \url{https://github.com/scofild429/go\_mpi\_network},This is the \textbf{README} page.
 \item Iris dataset (\url{https://www.kaggle.com/datasets/saurabh00007/iriscsv})
@@ -37,10 +47,9 @@
 \end{itemize}
 
 \textbf{All training data will equally divied for each training network, specially for mpi}
-\end{block}
 \end{frame}
 
-\begin{frame}[label={sec:orgc6ef77f},fragile]{Configuration  example}
+\begin{frame}[label={sec:org84200ee},fragile]{Configuration  example}
  \begin{itemize}
 \item ./goai/.irisenv
 \item ./goai/.imgenv
@@ -57,10 +66,10 @@ batchSize=4
 \end{verbatim}
 \end{frame}
 
-\begin{frame}[label={sec:org68361bb},fragile]{Sumbit the job in cluster}
+\begin{frame}[label={sec:orgf5eb9da},fragile]{Sumbit the job in cluster}
  \textbf{no singularity}, installing golang 1.18 was failed always
 
-using binary executable code of golang, \textbf{go build}
+using binary executable code of golang, \textbf{go build} and then transfering goai to cluster.
 
 \begin{verbatim}
 #!/bin/bash
@@ -77,7 +86,7 @@ mpirun -n 20 ./goai
 \end{verbatim}
 \end{frame}
 
-\begin{frame}[label={sec:orge3da525}]{Deep learning's problem}
+\begin{frame}[label={sec:org7f90c09}]{Deep learning's problem}
 As AI comes to deep learning, the computing resource becomes more critical for training process.
 
 \textbf{Applications:}
@@ -95,7 +104,7 @@ As AI comes to deep learning, the computing resource becomes more critical for t
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org22d3c14},fragile]{Single network architecture}
+\begin{frame}[label={sec:orga4083ae},fragile]{Single network architecture}
  \begin{verbatim}
 raining data -> inputLayer(w1, b1) -> dinputLayer
 Normalization
@@ -119,13 +128,13 @@ Derivative of sigmoid, Normalization, Standardization
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:orgaf239ea}]{Illustration of weights updating}
+\begin{frame}[label={sec:org9ec4f90}]{Illustration of weights updating}
 \begin{center}
 \includegraphics[width=0.8\textwidth]{./png/NeuralNetwork.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orga939ba6},fragile]{Code implementation}
+\begin{frame}[label={sec:org891179f},fragile]{Code implementation}
  \begin{verbatim}
 func main() {
 	singlenode.Single_node_iris(true)
@@ -147,7 +156,7 @@ Comparing with python:
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:orgfee0999}]{Network performance(iris dataset)}
+\begin{frame}[label={sec:org741ec0a}]{Network performance(iris dataset)}
 \begin{columns}
 \begin{column}{0.6\columnwidth}
 \begin{block}{Loss}
@@ -167,7 +176,7 @@ Comparing with python:
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:orgcef7e89},fragile]{MPI communication}
+\begin{frame}[label={sec:orgbfc7db6},fragile]{MPI communication}
  \begin{verbatim}
 github.com/sbromberger/gompi
 import CGO as C
@@ -190,13 +199,13 @@ import CGO as C
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org576e8a6}]{Non collective architecture}
+\begin{frame}[label={sec:org1c55666}]{Non collective architecture}
 \begin{center}
 \includegraphics[width=0.8\textwidth]{./png/MPINetworkSendRecv.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orge9806fb}]{Non collective design}
+\begin{frame}[label={sec:org91aa4dc}]{Non collective design}
 \begin{block}{rank = 0}
 \begin{itemize}
 \item in \textbf{main network} weights will be initialized, but not for training,
@@ -222,12 +231,12 @@ import CGO as C
 \end{block}
 \end{frame}
 
-\begin{frame}[label={sec:orgf132af2}]{Collective architecture}
+\begin{frame}[label={sec:org8a3f73e}]{Collective architecture}
 \begin{center}
 \includegraphics[width=0.8\textwidth]{./png/MPINetworkAllreduce.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:orgb162896}]{Collective design}
+\begin{frame}[label={sec:org26736c9}]{Collective design}
 \begin{itemize}
 \item All network train its data respectively,
 \item After each train batch, pack all weights into array
@@ -236,7 +245,7 @@ import CGO as C
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org3f3cba4}]{Iris dataset performance for non-collective}
+\begin{frame}[label={sec:orgc61dab6}]{Iris dataset performance for non-collective}
 \begin{columns}
 \begin{column}{0.6\columnwidth}
 \begin{block}{Send\&Recv loss}
@@ -256,7 +265,7 @@ import CGO as C
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:org1c71325}]{Iris dataset performance for collective}
+\begin{frame}[label={sec:org62ce37e}]{Iris dataset performance for collective}
 \begin{columns}
 \begin{column}{0.6\columnwidth}
 \begin{block}{Allreduce loss}
@@ -275,7 +284,7 @@ import CGO as C
 \end{columns}
 \end{frame}
 
-\begin{frame}[label={sec:orgfb39063}]{Intel image classification performance}
+\begin{frame}[label={sec:orged96df4}]{Intel image classification performance}
 \begin{columns}
 \begin{column}{0.55\columnwidth}
 \begin{block}{Send\&Recv loss (220 images)}
@@ -301,7 +310,7 @@ Allreduce loss (14000 images)
 \end{column}
 \end{columns}
 \end{frame}
-\begin{frame}[label={sec:orgfdf6a46}]{Speedup Diagrams}
+\begin{frame}[label={sec:org57511c6}]{Speedup Diagrams}
 \begin{columns}
 \begin{column}{0.6\columnwidth}
 \begin{block}{Iris for Allreduce and Send\&Recv with different nodes}
@@ -319,7 +328,7 @@ Allreduce loss (14000 images)
 \end{column}
 \end{columns}
 \end{frame}
-\begin{frame}[label={sec:org1ae9f9f}]{Discussion}
+\begin{frame}[label={sec:org82bca34}]{Discussion}
 \textbf{neural network model implement is not perfect, so the accuracy performance not so well}
 
 \textbf{For each epoch:}
@@ -334,7 +343,7 @@ Allreduce loss (14000 images)
 \textbf{Change the batchsize, reducing mpi communication}
 \end{frame}
 
-\begin{frame}[label={sec:org874bfce}]{Conclusion}
+\begin{frame}[label={sec:org255c599}]{Conclusion}
 \begin{itemize}
 \item Golang can also be used for parallel computing
 \item neural network implementation of golang can be improved
